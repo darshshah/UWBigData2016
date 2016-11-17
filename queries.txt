@@ -1,0 +1,25 @@
+1. Find the % of players younger than 21 years of age:
+
+data=sc.textFile("/tmp/player.csv").map(lambda line: line.split(","))
+header = data.first() #extract header
+playerRdd = data.filter(lambda row:row != header) 
+
+playerLessThanTwentyOneRdd = playerRdd.filter(lambda line: int((line[4].split(" "))[0].split("-")[0].strip('"')) > 1995)
+print float(playerLessThanTwentyOneRdd.count()*100) /float(playerRdd.count())
+
+Answer: 3.99638336347% players are below 21.
+
+
+
+2. Most common first name
+
+
+data=sc.textFile("/tmp/player.csv").map(lambda line: line.split(","))
+header = data.first() #extract header
+playerRdd = data.filter(lambda row:row != header)
+
+playerFirstNameRdd = playerRdd.map(lambda line: (line[2].split(" ")[0], 1))
+firstNameCount = playerFirstNameRdd.reduceByKey(lambda a,b: a+b)
+sortedNamesRdd = firstNameCount.map(lambda (x,y):(y,x)).sortByKey(ascending=False)
+print sortedNamesRdd.take(3)
+
